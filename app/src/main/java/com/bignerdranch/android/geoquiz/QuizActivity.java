@@ -2,12 +2,10 @@ package com.bignerdranch.android.geoquiz;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -39,6 +37,7 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
+    private int mCountTips = 3;
     private boolean mIsCheater;
 
     private static final String TAG = "QuizActivity";
@@ -111,12 +110,14 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
-                Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
+                Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue, mCountTips);
                 startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
 
         updateQuestion();
+
+
     }
 
     private void updateQuestion(){
@@ -170,6 +171,10 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
             mIsCheater = CheatActivity.wasAnswerShown(data);
+            mCountTips = CheatActivity.getCountTips(data);
+        }
+        if(mCountTips<=0){
+            mCheatButton.setVisibility(View.GONE);
         }
     }
 
